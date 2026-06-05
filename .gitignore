@@ -1,0 +1,15 @@
+# Local runtime configuration
+cloudflare-ddns-config.json
+*.user
+*.log
+
+# Legacy script packaging files
+cloudflare-ddns-tray.ps1
+install-tray-autostart.ps1
+update-cloudflare-ddns.ps1
+
+# Build scratch
+obj/
+bin/
+*.pdb
+dist/CloudflareDDNS.runtime.ico
