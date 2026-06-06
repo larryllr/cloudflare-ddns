@@ -1,5 +1,6 @@
 using Microsoft.Win32;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -389,8 +390,8 @@ namespace KuanKuan.CloudflareDdns
             if (!IsIPv4(ip)) throw new InvalidOperationException("Invalid IPv4: " + ip);
             var headers = BuildHeaders(config);
             var zone = ApiGet(headers, "/zones?name=" + Uri.EscapeDataString(config.ZoneName) + "&status=active");
-            var zoneList = (object[])zone["result"];
-            if (zoneList.Length == 0) throw new InvalidOperationException("Zone not found: " + config.ZoneName);
+            var zoneList = zone["result"] as IList;
+            if (zoneList == null || zoneList.Count == 0) throw new InvalidOperationException("Zone not found: " + config.ZoneName);
             var zoneId = (string)((Dictionary<string, object>)zoneList[0])["id"];
 
             var messages = new List<string>();
@@ -399,8 +400,8 @@ namespace KuanKuan.CloudflareDdns
                 var name = rawName.Trim().TrimEnd('.');
                 if (name.Length == 0) continue;
                 var dns = ApiGet(headers, "/zones/" + zoneId + "/dns_records?type=A&name=" + Uri.EscapeDataString(name));
-                var records = (object[])dns["result"];
-                if (records.Length == 0)
+                var records = dns["result"] as IList;
+                if (records == null || records.Count == 0)
                 {
                     var body = new Dictionary<string, object> {
                         {"type", "A"}, {"name", name}, {"content", ip}, {"ttl", config.Ttl}, {"proxied", config.Proxied}
@@ -553,10 +554,13 @@ namespace KuanKuan.CloudflareDdns
             try
             {
                 var parsed = Json.Deserialize<Dictionary<string, object>>(text);
-                var errors = parsed["errors"] as object[];
-                if (errors != null && errors.Length > 0)
+                var errors = parsed["errors"] as IList;
+                if (errors != null && errors.Count > 0)
                 {
-                    return string.Join("; ", errors.Select(e => Convert.ToString(((Dictionary<string, object>)e)["message"])).ToArray());
+                    var messages = new List<string>();
+                    foreach (var error in errors)
+                        messages.Add(Convert.ToString(((Dictionary<string, object>)error)["message"]));
+                    return string.Join("; ", messages.ToArray());
                 }
             }
             catch { }
