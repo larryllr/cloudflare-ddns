@@ -2,12 +2,14 @@
 
 一个 Windows 托盘版 Cloudflare DDNS 工具。作者：宽宽。
 
-它会在程序启动时刷新一次 Cloudflare DNS；之后保持安静，只在你右键托盘图标点 `Refresh now` 时手动刷新。
+它会在程序启动时刷新一次 Cloudflare DNS，并在后台每 30 分钟自动同步一次公网地址。每次自动或手动同步完成后都会重新开始 30 分钟计时。
 
 ## 功能
 
 - 托盘常驻，无 PowerShell 弹窗
-- 设置全图形化：邮箱、Global API Key / API Token、Zone、记录名、自定义 IP
+- 中文状态面板：当前 IP、运行状态、上次与下次同步时间一目了然
+- 全新的图形化设置界面：邮箱、Global API Key / API Token、Zone、记录名、自定义 IP
+- 每 30 分钟自动同步，支持随程序启动立即刷新
 - `Custom IP` 留空时自动检测公网 IPv4
 - 公网 IPv4 检测禁用系统代理
 - 支持开机自启
@@ -22,7 +24,7 @@
 dist\CloudflareDDNS.exe
 ```
 
-右键托盘图标，打开 `Settings`：
+双击托盘图标可打开状态面板；右键托盘图标可立即同步或打开 `设置`：
 
 - `Zone`：Cloudflare 里的 zone，例如 `example.com`
 - `Records`：要同步的 A 记录，例如 `home.example.com`
@@ -32,7 +34,7 @@ dist\CloudflareDDNS.exe
 - `Refresh when app starts`：程序启动时刷新一次
 - `Start with Windows`：开机自启
 
-保存后，可右键托盘图标点 `Refresh now` 立即刷新。
+保存后，可在状态面板点击 `立即同步`，或右键托盘图标点击 `立即同步`。程序会继续每 30 分钟自动同步。
 
 ## Cloudflare 权限
 
@@ -57,7 +59,7 @@ https://你的域名:端口
 
 ## 构建
 
-在 Windows PowerShell 里运行：
+在 PowerShell 7 里运行：
 
 ```powershell
 .\build.ps1
