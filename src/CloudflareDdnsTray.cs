@@ -438,7 +438,7 @@ namespace KuanKuan.CloudflareDdns
 
             var logo = new PictureBox
             {
-                Image = icon.ToBitmap(),
+                Image = CreateHeaderLogo(),
                 Location = new Point(28, 28),
                 Size = new Size(56, 56),
                 SizeMode = PictureBoxSizeMode.Zoom,
@@ -510,6 +510,33 @@ namespace KuanKuan.CloudflareDdns
                     Hide();
                 }
             };
+        }
+
+        static Bitmap CreateHeaderLogo()
+        {
+            var bitmap = new Bitmap(56, 56);
+            using (var graphics = Graphics.FromImage(bitmap))
+            {
+                graphics.Clear(Color.Transparent);
+                graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+                using (var shadow = new SolidBrush(Color.FromArgb(38, 91, 48, 12)))
+                {
+                    graphics.FillEllipse(shadow, 4, 28, 22, 21);
+                    graphics.FillEllipse(shadow, 14, 14, 31, 35);
+                    graphics.FillEllipse(shadow, 35, 25, 18, 23);
+                    graphics.FillRectangle(shadow, 12, 34, 34, 15);
+                }
+
+                using (var cloud = new SolidBrush(Color.White))
+                {
+                    graphics.FillEllipse(cloud, 3, 26, 22, 21);
+                    graphics.FillEllipse(cloud, 13, 12, 31, 35);
+                    graphics.FillEllipse(cloud, 34, 23, 19, 23);
+                    graphics.FillRectangle(cloud, 11, 32, 35, 15);
+                }
+            }
+            return bitmap;
         }
 
         static Panel CreateCard(Point location, Size size)
